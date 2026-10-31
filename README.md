@@ -84,3 +84,12 @@ npm run start:dev
 Create an `.env` file inside the `api` directory and configure your PostgreSQL connection using `DATABASE_URL`.
 
 Never commit your actual `.env` file or database credentials.
+
+## Project Structure
+
+The backend implementation is located in the `api/` directory.
+
+- `api/prisma/schema.prisma` - Defines the database models, Role enum, and relationships.
+- `api/prisma/seed.ts` - Seeds the database with 4 genres and 16 books.
+- `api/src/prisma/prisma.service.ts` - Manages the Prisma database connection in NestJS.
+- `api/.env.example` - Provides a placeholder for the PostgreSQL DATABASE_URL.
