@@ -13,14 +13,30 @@ enum Role {
   LIBRARIAN
 }
 
+enum BorrowStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BORROWED
+  RETURNED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(PATRON)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  password       String
+  role           Role            @default(PATRON)
+  borrowRequests BorrowRequest[]
+  bookings       Booking[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Genre {
@@ -32,14 +48,63 @@ model Genre {
 }
 
 model Book {
-  id            String   @id @default(cuid())
-  title         String   @unique
+  id            String          @id @default(cuid())
+  title         String          @unique
   author        String
-  isbn          String?  @unique
+  isbn          String?         @unique
   publishedYear Int?
-  totalCopies   Int      @default(1)
+  totalCopies   Int             @default(1)
   genreId       String
-  genre         Genre    @relation(fields: [genreId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  genre         Genre           @relation(fields: [genreId], references: [id])
+  borrowRequests BorrowRequest[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model BorrowRequest {
+  id         String       @id @default(cuid())
+  userId     String
+  bookId     String
+  status     BorrowStatus @default(PENDING)
+  requestDate DateTime    @default(now())
+  dueDate    DateTime?
+  returnDate DateTime?
+  fineAmount Float        @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+  book Book @relation(fields: [bookId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([bookId])
+}
+
+model Space {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  capacity    Int       @default(1)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id        String        @id @default(cuid())
+  userId    String
+  spaceId   String
+  startTime DateTime
+  endTime   DateTime
+  status    BookingStatus @default(PENDING)
+
+  user  User  @relation(fields: [userId], references: [id])
+  space Space @relation(fields: [spaceId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([spaceId, startTime, endTime])
+  @@index([userId])
 }

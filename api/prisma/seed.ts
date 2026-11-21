@@ -130,6 +130,36 @@ async function main() {
     });
   }
 
+  // Create library spaces
+  const spaces = [
+    {
+      name: 'Study Room A',
+      description: 'A quiet room for individual study',
+      capacity: 4,
+    },
+    {
+      name: 'Study Room B',
+      description: 'A comfortable space for group study',
+      capacity: 6,
+    },
+    {
+      name: 'Discussion Room',
+      description: 'A room for group discussions and meetings',
+      capacity: 10,
+    },
+  ];
+
+  // Insert spaces without creating duplicates
+  for (const space of spaces) {
+    await prisma.space.upsert({
+      where: { name: space.name },
+      update: {},
+      create: space,
+    });
+  }
+
+  console.log('Created or confirmed 3 library spaces.');
+
   console.log('Database seeded successfully!');
   console.log('Created or confirmed 4 genres and 16 books.');
 }
