@@ -1,6 +1,19 @@
 import { Link } from "react-router-dom";
+import { useReadingList } from "../context/ReadingListContext";
 
 function BookCard({ book }) {
+  const { readingList, addBook, removeBook } = useReadingList();
+
+  const isAdded = readingList.some((item) => item.id === book.id);
+
+  const handleReadingList = () => {
+    if (isAdded) {
+      removeBook(book.id);
+    } else {
+      addBook(book);
+    }
+  };
+
   return (
     <div className="book-card">
       <h3>{book.title}</h3>
@@ -22,6 +35,10 @@ function BookCard({ book }) {
       </p>
 
       <Link to={`/books/${book.id}`}>View Details</Link>
+
+      <button onClick={handleReadingList}>
+        {isAdded ? "Remove from Reading List" : "Add to Reading List"}
+      </button>
     </div>
   );
 }
