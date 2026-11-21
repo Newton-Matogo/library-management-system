@@ -1,14 +1,54 @@
 # Library Management System
 
-A backend application for managing a library, built with **NestJS**, **Prisma ORM**, and **Supabase PostgreSQL**.
+A full-stack Library Management System built with **NestJS**, **React**, **Prisma ORM**, and **Supabase PostgreSQL**.
+
+The application allows users to browse books, search by title or author, filter books by genre, and view detailed book information. It also provides authentication, role-based authorization, and book and genre management APIs.
 
 ## Technologies Used
+
+### Backend
 
 - Node.js
 - NestJS
 - TypeScript
 - Prisma ORM
 - PostgreSQL (Supabase)
+- JWT Authentication
+- bcrypt
+
+### Frontend
+
+- React
+- Vite
+- React Router
+- CSS
+- JavaScript
+
+## Features
+
+### Backend
+
+- User registration and login.
+- Password hashing using bcrypt.
+- JWT-based authentication.
+- Role-based authorization for PATRON and LIBRARIAN users.
+- Genre CRUD operations.
+- Book CRUD operations.
+- Book search by title and author.
+- Book filtering by genre.
+- Pagination for book listings.
+- DTO validation.
+
+### Frontend
+
+- Responsive book catalogue.
+- Display of books from the backend API.
+- Search books by title or author.
+- Debounced live search.
+- Filter books by genre.
+- View detailed information about individual books.
+- Loading, error, and empty states.
+- Navigation using React Router.
 
 ## Database Schema
 
@@ -53,43 +93,143 @@ The Prisma seed script creates:
 - 4 genres.
 - 16 books distributed across the genres.
 
-To run the seed script:
+To run the seed script from the API directory:
 
 ```bash
 npx prisma db seed
 ```
 
-## Running the Application
+## Project Structure
 
-Navigate to the API folder:
-
-```bash
-cd api
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run start:dev
+```text
+library-management-system/
+├── api/
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── seed.ts
+│   ├── src/
+│   │   ├── auth/
+│   │   ├── books/
+│   │   ├── genres/
+│   │   └── prisma/
+│   ├── .env.example
+│   └── package.json
+│
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── BookCard.jsx
+│   │   │   ├── BookGrid.jsx
+│   │   │   └── SearchBar.jsx
+│   │   ├── pages/
+│   │   │   ├── BookDetail.jsx
+│   │   │   └── HomePage.jsx
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   └── .gitignore
+│
+└── README.md
 ```
 
 ## Environment Variables
 
-Create an `.env` file inside the `api` directory and configure your PostgreSQL connection using `DATABASE_URL`.
+### Backend
 
-Never commit your actual `.env` file or database credentials.
+Create an `.env` file inside the `api/` directory.
 
-## Project Structure
+Configure the following variables:
 
-The backend implementation is located in the `api/` directory.
+```env
+DATABASE_URL="your_supabase_postgresql_connection_string"
+JWT_SECRET="your_secret_key"
+```
 
-- `api/prisma/schema.prisma` - Defines the database models, Role enum, and relationships.
-- `api/prisma/seed.ts` - Seeds the database with 4 genres and 16 books.
-- `api/src/prisma/prisma.service.ts` - Manages the Prisma database connection in NestJS.
-- `api/.env.example` - Provides a placeholder for the PostgreSQL DATABASE_URL.
+### Frontend
+
+Create an `.env` file inside the `client/` directory:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+Never commit actual `.env` files or database credentials.
+
+## Running the Application
+
+You need to run the backend and frontend in separate terminals.
+
+### 1. Start the Backend
+
+Open a terminal:
+
+```bash
+cd api
+npm install
+npm run start:dev
+```
+
+The backend runs at:
+
+`http://localhost:3000`
+
+### 2. Start the Frontend
+
+Open another terminal from the project root:
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+The frontend runs at:
+
+`http://localhost:5173`
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint         | Description     |
+| ------ | ---------------- | --------------- |
+| POST   | `/auth/register` | Register a user |
+| POST   | `/auth/login`    | Log in a user   |
+
+### Genres
+
+| Method | Endpoint      | Description    |
+| ------ | ------------- | -------------- |
+| GET    | `/genres`     | Get all genres |
+| GET    | `/genres/:id` | Get a genre    |
+| POST   | `/genres`     | Create a genre |
+| PATCH  | `/genres/:id` | Update a genre |
+| DELETE | `/genres/:id` | Delete a genre |
+
+### Books
+
+| Method | Endpoint     | Description         |
+| ------ | ------------ | ------------------- |
+| GET    | `/books`     | Get books           |
+| GET    | `/books/:id` | Get a specific book |
+| POST   | `/books`     | Create a book       |
+| PATCH  | `/books/:id` | Update a book       |
+| DELETE | `/books/:id` | Delete a book       |
+
+Book listing supports search, genre filtering, and pagination.
+
+Book creation, updating, and deletion require librarian authorization.
+
+## Testing
+
+A Postman collection is provided in:
+
+`docs/postman_collection.json`
+
+Import the collection into Postman to test the backend API endpoints.
+
+## Author
+
+Library Management System - Full-Stack Development Project
