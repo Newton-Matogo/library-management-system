@@ -1,0 +1,315 @@
+{
+  "info": {
+    "name": "Library Management System API",
+    "description": "Postman collection for the Library Management System backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "genreId",
+      "value": ""
+    },
+    {
+      "key": "bookId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Patron\",\n  \"email\": \"patron@example.com\",\n  \"password\": \"TestPass123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "    pm.collectionVariables.set('accessToken', data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patron@example.com\",\n  \"password\": \"TestPass123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Genres",
+      "item": [
+        {
+          "name": "Create Genre",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Genre created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data.id) {",
+                  "    pm.collectionVariables.set('genreId', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Art\",\n  \"description\": \"Books about art and creativity\"\n}"
+            },
+            "url": "{{baseUrl}}/genres"
+          }
+        },
+        {
+          "name": "Get All Genres",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/genres"
+          }
+        },
+        {
+          "name": "Get Genre By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/genres/{{genreId}}"
+          }
+        },
+        {
+          "name": "Update Genre",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Visual Arts\",\n  \"description\": \"Updated art and creativity category\"\n}"
+            },
+            "url": "{{baseUrl}}/genres/{{genreId}}"
+          }
+        },
+        {
+          "name": "Delete Genre",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/genres/{{genreId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Art of Programming\",\n  \"author\": \"Test Author\",\n  \"isbn\": \"9780306406157\",\n  \"totalCopies\": 5,\n  \"genreId\": \"{{genreId}}\",\n  \"publishedYear\": 2024\n}"
+            },
+            "url": "{{baseUrl}}/books"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Book created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data.id) {",
+                  "    pm.collectionVariables.set('bookId', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books?search=History",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "History"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Books By Genre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books?genreId={{genreId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "genreId",
+                  "value": "{{genreId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Book By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Art of Programming - Revised\",\n  \"totalCopies\": 8\n}"
+            },
+            "url": "{{baseUrl}}/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/books/{{bookId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
